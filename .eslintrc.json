@@ -1,0 +1,22 @@
+{
+    "extends": ["airbnb", "plugin:react/recommended"],
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "ecmaFeatures": {
+        "jsx": true,
+        "impliedStrict": false
+      }
+    },
+    "parser": "babel-eslint",
+    "plugins": [
+      "react"
+    ],
+    "rules": {
+      "react/prefer-stateless-function": "off",
+      "strict": 0
+    },
+    "env":{
+      "node": true,
+      "browser": true
+    }
+}

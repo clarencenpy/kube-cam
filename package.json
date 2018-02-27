@@ -1,0 +1,53 @@
+{
+  "name": "kube-cam",
+  "version": "1.0.0",
+  "description": "stuff",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "dev": "webpack-dev-server --host=0.0.0.0",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src --ext .jsx"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/setttings/kube-cam.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/setttings/kube-cam/issues"
+  },
+  "homepage": "https://github.com/setttings/kube-cam#README.md",
+  "dependencies": {
+    "react": "^15.3.2",
+    "react-addons-shallow-compare": "^15.3.2",
+    "react-bootstrap": "^0.30.10",
+    "react-dom": "^15.3.2",
+    "react-virtualized": "^8.2.0",
+    "vizceral-react": "~4.5.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.18.0",
+    "babel-eslint": "^7.1.0",
+    "babel-loader": "^6.2.7",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "css-loader": "^0.28.10",
+    "eslint": "^4.18.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
+    "eslint-watch": "^3.1.3",
+    "file-loader": "^0.9.0",
+    "html-loader": "^0.4.4",
+    "html-webpack-plugin": "^2.24.0",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.13.3",
+    "webpack-dev-server": "^1.16.2"
+  }
+}
