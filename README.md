@@ -1,4 +1,5 @@
 # Project Title
+[![Build Status](https://travis-ci.com/setttings/kube-cam.svg?token=rnsfBSr65omB9Dwzrq4q&branch=master)](https://travis-ci.com/setttings/kube-cam)
 
 One Paragraph of project description goes here
 
