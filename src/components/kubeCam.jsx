@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Vizceral from 'vizceral-react';
+import LiveTrafficData from '../controllers/LiveTrafficData';
 
 class KubeCam extends React.Component {
   constructor(props) {
@@ -11,7 +12,7 @@ class KubeCam extends React.Component {
       trafficData: {
         renderer: 'region',
         name: 'edge',
-        maxVolume: 100000,
+        maxVolume: 10,
         entryNode: 'INTERNET',
         nodes: [
           {
@@ -22,7 +23,7 @@ class KubeCam extends React.Component {
             layout: 'ltrTree',
             name: 'stuff',
             updated: 1462471847,
-            maxVolume: 100000,
+            maxVolume: 10,
           },
         ],
         connections: [
@@ -48,8 +49,25 @@ class KubeCam extends React.Component {
       searchTerm: undefined,
       modes: undefined,
     };
+
+    this.interval = undefined;
+
+    this.traffic = new LiveTrafficData();
   }
 
+  componentDidMount() {
+    this.interval = setInterval(() => {
+      this.updateTrafficData();
+    }, 5000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  updateTrafficData() {
+    this.traffic.updateLiveTrafficData(this.setState.bind(this));
+  }
 
   render() {
     return (

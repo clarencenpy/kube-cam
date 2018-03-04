@@ -24,11 +24,20 @@ module.exports = {
       },
       {
         test: /\.css$/, loader: 'style-loader!css-loader'
+      },
+      {
+        test: /\.json$/, loader: 'json-loader'
       }
     ],
   },
   resolve: {
     extensions: ['', '.jsx', '.js']
+  },
+  node: {
+    console: true,
+    fs: 'empty',
+    net: 'empty',
+    tls: 'empty'
   },
   plugins: [
     new HtmlWebpackPlugin({
