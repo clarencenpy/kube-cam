@@ -15,7 +15,8 @@
       "react/prefer-stateless-function": "off",
       "strict": 0,
       "no-console": "off",
-      "class-methods-use-this": "off"
+      "class-methods-use-this": "off",
+      "object-shorthand": "off"
     },
     "env":{
       "node": true,
