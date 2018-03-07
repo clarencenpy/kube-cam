@@ -15,6 +15,7 @@ class PrometheusClient {
     };
   }
 
+
   getTrafficData(startTime, endTime, step, callback) {
     this.options.qs.start = startTime;
     this.options.qs.end = endTime;

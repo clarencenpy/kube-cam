@@ -11,6 +11,7 @@ class LiveTrafficData {
     this.prometheusClient = new PrometheusClient();
   }
 
+
   updateLiveTrafficData(updateState) {
     const startTime = this.getWindowStartTimeInISOFOrmat();
     const endTime = this.getWindowEndTimeInISOFormat();
@@ -21,13 +22,16 @@ class LiveTrafficData {
       buildAndUpdateTrafficWrapper(updateState));
   }
 
+
   getWindowStartTimeInISOFOrmat() {
     return moment().subtract(this.requestRate, 'seconds').toISOString();
   }
 
+
   getWindowEndTimeInISOFormat() {
     return moment().toISOString();
   }
+
 
   buildAndUpdateTraffic(err, resp, body, setState) {
     if (err) {
@@ -39,8 +43,8 @@ class LiveTrafficData {
 
       const nodes = [];
       const connections = [];
-      const jsonBody = JSON.parse(body);
 
+      const jsonBody = JSON.parse(body);
 
       for (let i = 0; i < jsonBody.data.result.length; i += 1) {
         const currentItem = jsonBody.data.result[i];

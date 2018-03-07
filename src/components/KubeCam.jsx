@@ -24,19 +24,23 @@ class KubeCam extends React.Component {
     this.traffic = new LiveTrafficData();
   }
 
+
   componentDidMount() {
     this.interval = setInterval(() => {
       this.updateTrafficData();
     }, 5000);
   }
 
+
   componentWillUnmount() {
     clearInterval(this.interval);
   }
 
+
   updateTrafficData() {
     this.traffic.updateLiveTrafficData(this.setState.bind(this));
   }
+
 
   render() {
     return (
