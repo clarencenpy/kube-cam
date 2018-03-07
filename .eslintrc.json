@@ -16,7 +16,8 @@
       "strict": 0,
       "no-console": "off",
       "class-methods-use-this": "off",
-      "object-shorthand": "off"
+      "object-shorthand": "off",
+      "function-paren-newline": ["error", "never"]
     },
     "env":{
       "node": true,
