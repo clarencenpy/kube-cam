@@ -58,40 +58,39 @@ class LiveTrafficData {
 
         const responseCode = currentMetric.response_code;
 
-        const oldViewCount = currentValues[0][1];
-        const newViewCount = currentValues[1][1];
+        // Calculate number of requests seen in the latest time period
+        const oldViewCount = parseInt(currentValues[0][1], 10);
+        const newViewCount = parseInt(currentValues[1][1], 10);
         const trafficSeen = newViewCount - oldViewCount;
 
         const node = this.getNode(destinationService, nodes);
         const connection = this.getConnection(sourceService, destinationService, connections);
 
-        if (trafficSeen !== 0 && responseCode !== 200) {
-          // TODO: Some error, render error at the node and on the edge
+        if (connection.metrics === undefined) {
+          connection.metrics = { normal: 0, warning: 0 };
         }
-        // TODO: Update node data with the amount of metrics seen
+
+        if (responseCode !== '200') {
+          connection.metrics.warning += trafficSeen;
+        } else {
+          connection.metrics.normal += trafficSeen;
+        }
+
         node.renderer = 'region';
         node.layout = 'ltrTree';
         node.name = destinationService;
-        node.maxVolume = 10;
+        node.maxVolume = 10000;
         nodes.push(node);
 
-        // Update edge data
         connection.source = sourceService;
         connection.target = destinationService;
 
-        // TODO: Fix this to render a more appropriate edge density
-        connection.metrics = { normal: 1, danger: 1, warning: 1 };
-        connection.notices = [];
-        connection.metadata = {};
         connections.push(connection);
       }
 
       // Create node representing ingress
       const ingressNode = { name: 'INTERNET' };
       nodes.push(ingressNode);
-
-      trafficData.nodes = nodes;
-      trafficData.connections = connections;
 
       // Add ingress and other mandatory details
       trafficData.renderer = 'region';
@@ -100,6 +99,8 @@ class LiveTrafficData {
       trafficData.entryNode = 'INTERNET';
       trafficData.nodes = nodes;
       trafficData.displayOptions = { showLabels: true };
+      trafficData.nodes = nodes;
+      trafficData.connections = connections;
       setState({ trafficData: trafficData });
     }
   }
