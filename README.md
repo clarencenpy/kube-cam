@@ -1,7 +1,14 @@
-# Project Title
+# kube-cam
 [![Build Status](https://travis-ci.com/setttings/kube-cam.svg?token=rnsfBSr65omB9Dwzrq4q&branch=master)](https://travis-ci.com/setttings/kube-cam)
 
-One Paragraph of project description goes here
+Monitoring network traffic on a Kubernetes cluster.
+
+Disclaimer: No identification with actual persons (living or deceased), places, buildings, and products is intended or should be inferred.
+
+## What's Included
+* A
+* B
+* C
 
 ## Getting Started
 
@@ -9,35 +16,46 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+What you need to install the software and how to install them
 
-```
-Give examples
-```
+* [Istio](https://istio.io/)
+* [Node.js](https://nodejs.org/en/)
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
-
-Say what the step will be
+Set up a Kubernetes cluster with Istio installed and deploy your application with Istio sidecars.
 
 ```
-Give the example
+kubectl apply -f install/kubernetes/istio.yaml
 ```
 
-And repeat
+See the [Istio documentation](https://istio.io/docs/setup/kubernetes/quick-start.html) for detailed instructions and the [sample application](sample) for an example of how to get started.
+
+Install the Prometheus add-on for Istio.
 
 ```
-until finished
+kubectl apply -f install/kubernetes/addons/prometheus.yaml
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+Setup port-forwarding for Prometheus.
 
-## Running the tests
+```
+kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=prometheus -o jsonpath='{.items[0].metadata.name}') 9090:9090 &
+```
 
-Explain how to run the automated tests for this system
+Start the kube-cam application.
 
-### Break down into end to end tests
+```
+npm init
+
+npm run dev
+```
+
+Visit [http://localhost:8080](http://localhost:8080) in your browser.
+
+## Testing
+
+### E2E tests
 
 Explain what these tests test and why
 
@@ -45,12 +63,12 @@ Explain what these tests test and why
 Give an example
 ```
 
-### And coding style tests
+### Style
 
-Explain what these tests test and why
+Uses [ESLint](https://eslint.org/).
 
 ```
-Give an example
+npm run lint
 ```
 
 ## Deployment
@@ -58,8 +76,8 @@ Give an example
 Add additional notes about how to deploy this on a live system
 
 ## Built With
-
-
+* Stress
+* [Structured procrastination](http://www.structuredprocrastination.com/)
 
 ## Contributing
 
@@ -71,13 +89,11 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* 
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+*
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.](LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 
 ## Acknowledgments
 
