@@ -37,8 +37,6 @@ class LiveTrafficData {
     if (err) {
       console.log(err);
     } else {
-      const ingressName = 'ingress.istio-system.svc.cluster.local';
-
       const trafficData = {};
 
       const nodes = [];
@@ -51,10 +49,12 @@ class LiveTrafficData {
         const currentMetric = currentItem.metric;
         const currentValues = currentItem.values;
 
-        const node = {};
         // TODO: have some differentiation based on versions
         const destinationService = currentMetric.destination_service;
-        const sourceService = currentMetric.source_service;
+        let sourceService = currentMetric.source_service;
+        if (sourceService === 'ingress.istio-system.svc.cluster.local') {
+          sourceService = 'INTERNET';
+        }
 
         const responseCode = currentMetric.response_code;
 
@@ -62,24 +62,21 @@ class LiveTrafficData {
         const newViewCount = currentValues[1][1];
         const trafficSeen = newViewCount - oldViewCount;
 
-        // Update node data
+        const node = this.getNode(destinationService, nodes);
+        const connection = this.getConnection(sourceService, destinationService, connections);
+
         if (trafficSeen !== 0 && responseCode !== 200) {
-          // TODO: Some error, render error at the node
+          // TODO: Some error, render error at the node and on the edge
         }
+        // TODO: Update node data with the amount of metrics seen
         node.renderer = 'region';
         node.layout = 'ltrTree';
         node.name = destinationService;
-        node.updated = 1462471847;
         node.maxVolume = 10;
         nodes.push(node);
 
         // Update edge data
-        const connection = {};
-        if (sourceService === ingressName) {
-          connection.source = 'INTERNET';
-        } else {
-          connection.source = sourceService;
-        }
+        connection.source = sourceService;
         connection.target = destinationService;
 
         // TODO: Fix this to render a more appropriate edge density
@@ -105,6 +102,32 @@ class LiveTrafficData {
       trafficData.displayOptions = { showLabels: true };
       setState({ trafficData: trafficData });
     }
+  }
+
+
+  getNode(serviceName, nodes) {
+    for (let i = 0; i < nodes.length; i += 1) {
+      if (nodes[i].name === serviceName) {
+        const node = nodes[i];
+        nodes.splice(i, 1);
+        return node;
+      }
+    }
+    return {};
+  }
+
+
+  getConnection(currSource, currDest, connections) {
+    for (let i = 0; i < connections.length; i += 1) {
+      const edgeSource = connections[i].source;
+      const edgeDest = connections[i].target;
+      if (edgeDest === currDest && currSource === edgeSource) {
+        const connection = connections[i];
+        connections.splice(i, 1);
+        return connection;
+      }
+    }
+    return {};
   }
 }
 
