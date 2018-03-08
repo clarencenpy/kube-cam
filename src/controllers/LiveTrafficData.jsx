@@ -66,15 +66,7 @@ class LiveTrafficData {
         const node = this.getNode(destinationService, nodes);
         const connection = this.getConnection(sourceService, destinationService, connections);
 
-        if (connection.metrics === undefined) {
-          connection.metrics = { normal: 0, warning: 0 };
-        }
-
-        if (responseCode !== '200') {
-          connection.metrics.warning += trafficSeen;
-        } else {
-          connection.metrics.normal += trafficSeen;
-        }
+        this.updateConnectionMetrics(connection.metrics, responseCode, trafficSeen);
 
         node.renderer = 'region';
         node.layout = 'ltrTree';
@@ -128,7 +120,27 @@ class LiveTrafficData {
         return connection;
       }
     }
-    return {};
+    const metrics = { normal: 0, warning: 0, danger: 0 };
+    return { metrics };
+  }
+
+
+  updateConnectionMetrics(metrics, responseCode, seen) {
+    const type = responseCode.charAt(0);
+    
+    const ResponseCode = {
+      SUCCESS: '2',
+      CLIENTERROR: '4',
+      SERVERERROR: '5'
+    };
+
+    if (type === ResponseCode.CLIENTERROR) {
+      metrics.warning += seen;
+    } else if (type === ResponseCode.SERVERERROR) {
+      metrics.danger += seen;
+    } else {
+      metrics.normal += seen;
+    }
   }
 }
 
