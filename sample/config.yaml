@@ -1,0 +1,105 @@
+####################
+# Frontend Service #
+####################
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: frontend-service
+  labels:
+    app: frontend-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-service
+  template:
+    metadata:
+      labels:
+        app: frontend-service
+      namespace: default
+    spec:
+      containers:
+        - name: frontend-service
+          image: us.gcr.io/dev-619/front:v1
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  labels:
+    app: frontend-service
+spec:
+  selector:
+    app: frontend-service
+  ports:
+  - name: http
+    port: 80
+    targetPort: 5000
+###################
+# Backend Service #
+###################
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: backend-service
+  labels:
+    app: backend-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-service
+  template:
+    metadata:
+      labels:
+        app: backend-service
+      namespace: default
+    spec:
+      containers:
+        - name: backend-service
+          image: us.gcr.io/dev-619/back:v1
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 6000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  labels:
+    app: backend-service
+spec:
+  selector:
+    app: backend-service
+  ports:
+  - name: http
+    port: 80
+    targetPort: 6000
+---
+####################
+# Ingress resource #
+####################
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: gateway
+  annotations:
+    kubernetes.io/ingress.class: "istio"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: frontend-service
+          servicePort: 80
+      - path: /number
+        backend:
+          serviceName: frontend-service
+          servicePort: 80
+---
