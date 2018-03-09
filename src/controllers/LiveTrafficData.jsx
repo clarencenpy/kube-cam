@@ -127,11 +127,11 @@ class LiveTrafficData {
 
   updateConnectionMetrics(metrics, responseCode, seen) {
     const type = responseCode.charAt(0);
-    
+
     const ResponseCode = {
       SUCCESS: '2',
       CLIENTERROR: '4',
-      SERVERERROR: '5'
+      SERVERERROR: '5',
     };
 
     if (type === ResponseCode.CLIENTERROR) {

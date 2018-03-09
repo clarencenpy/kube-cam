@@ -4,7 +4,7 @@ import React from 'react';
 import Vizceral from 'vizceral-react';
 import LiveTrafficData from '../controllers/LiveTrafficData';
 
-class KubeCam extends React.Component {
+class LiveCam extends React.Component {
   constructor(props) {
     super(props);
 
@@ -44,29 +44,24 @@ class KubeCam extends React.Component {
 
   render() {
     return (
-      <div id="ugh">
-        <div id="hi">
-          <h1>Hi</h1>
-        </div>
-        <div id="vizceral-container">
-          <Vizceral
-            traffic={this.state.trafficData}
-            view={this.state.currentView}
-            showLabels={this.state.displayOptions.showLabels}
-            physicsOptions={this.state.physicsOptions}
-            filters={this.state.filters}
-            viewChanged={this.viewChanged}
-            viewUpdated={this.viewUpdated}
-            objectHighlighted={this.objectHighlighted}
-            nodeContextSizeChanged={this.nodeContextSizeChanged}
-            matchesFound={this.matchesFound}
-            match={this.state.searchTerm}
-            modes={this.state.modes}
-          />
-        </div>
+      <div id="vizceral-container">
+        <Vizceral
+          traffic={this.state.trafficData}
+          view={this.state.currentView}
+          showLabels={this.state.displayOptions.showLabels}
+          physicsOptions={this.state.physicsOptions}
+          filters={this.state.filters}
+          viewChanged={this.viewChanged}
+          viewUpdated={this.viewUpdated}
+          objectHighlighted={this.objectHighlighted}
+          nodeContextSizeChanged={this.nodeContextSizeChanged}
+          matchesFound={this.matchesFound}
+          match={this.state.searchTerm}
+          modes={this.state.modes}
+        />
       </div>
     );
   }
 }
 
-export default KubeCam;
+export default LiveCam;

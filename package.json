@@ -21,10 +21,10 @@
   "homepage": "https://github.com/setttings/kube-cam#README.md",
   "dependencies": {
     "moment": "^2.21.0",
-    "react": "^15.3.2",
+    "react": "^15.6.2",
     "react-addons-shallow-compare": "^15.3.2",
     "react-bootstrap": "^0.30.10",
-    "react-dom": "^15.3.2",
+    "react-dom": "^15.6.2",
     "react-virtualized": "^8.2.0",
     "request": "^2.83.0",
     "vizceral-react": "~4.5.1"

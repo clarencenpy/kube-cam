@@ -4,12 +4,16 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import './app.css';
-import KubeCam from './components/KubeCam';
+import LiveCam from './components/LiveCam';
+import Navigation from './components/Navigation';
 
 class App extends Component {
   render() {
     return (
-      <KubeCam />
+      <div id="app">
+        <Navigation />
+        <LiveCam />
+      </div>
     );
   }
 }
