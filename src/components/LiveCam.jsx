@@ -12,6 +12,7 @@ class LiveCam extends React.Component {
       currentView: [],
       displayOptions: {
         showLabels: true,
+        allowDraggingOfNodes: true,
       },
       physicsOptions: undefined,
       filters: [],
@@ -58,6 +59,7 @@ class LiveCam extends React.Component {
           matchesFound={this.matchesFound}
           match={this.state.searchTerm}
           modes={this.state.modes}
+          allowDraggingOfNodes={this.state.displayOptions.allowDraggingOfNodes}
         />
       </div>
     );
