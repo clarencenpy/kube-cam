@@ -37,64 +37,70 @@ class LiveTrafficData {
     if (err) {
       console.log(err);
     } else {
-      const trafficData = {};
-
-      const nodes = [];
-      const connections = [];
-
       const jsonBody = JSON.parse(body);
 
-      for (let i = 0; i < jsonBody.data.result.length; i += 1) {
-        const currentItem = jsonBody.data.result[i];
-        const currentMetric = currentItem.metric;
-        const currentValues = currentItem.values;
+      const trafficData = this.buildTrafficDataObject(jsonBody);
 
-        // TODO: have some differentiation based on versions
-        const destinationService = currentMetric.destination_service;
-        let sourceService = currentMetric.source_service;
-        if (sourceService === 'ingress.istio-system.svc.cluster.local') {
-          sourceService = 'INTERNET';
-        }
-
-        const responseCode = currentMetric.response_code;
-
-        // Calculate number of requests seen in the latest time period
-        const oldViewCount = parseInt(currentValues[0][1], 10);
-        const newViewCount = parseInt(currentValues[1][1], 10);
-        const trafficSeen = newViewCount - oldViewCount;
-
-        const node = this.getNode(destinationService, nodes);
-        const connection = this.getConnection(sourceService, destinationService, connections);
-
-        this.updateConnectionMetrics(connection.metrics, responseCode, trafficSeen);
-
-        node.renderer = 'region';
-        node.layout = 'ltrTree';
-        node.name = destinationService;
-        node.maxVolume = 10000;
-        nodes.push(node);
-
-        connection.source = sourceService;
-        connection.target = destinationService;
-
-        connections.push(connection);
-      }
-
-      // Create node representing ingress
-      const ingressNode = { name: 'INTERNET' };
-      nodes.push(ingressNode);
-
-      // Add ingress and other mandatory details
-      trafficData.renderer = 'region';
-      trafficData.name = 'edge';
-      trafficData.maxVolume = 10;
-      trafficData.entryNode = 'INTERNET';
-      trafficData.nodes = nodes;
-      trafficData.displayOptions = { showLabels: true };
-      trafficData.nodes = nodes;
-      trafficData.connections = connections;
       setState({ trafficData: trafficData });
     }
+  }
+
+
+  buildTrafficDataObject(body) {
+    const trafficData = {};
+
+    const nodes = [];
+    const connections = [];
+
+    for (let i = 0; i < body.data.result.length; i += 1) {
+      const currentItem = body.data.result[i];
+      const currentMetric = currentItem.metric;
+      const currentValues = currentItem.values;
+
+      const destinationService = currentMetric.destination_service;
+      let sourceService = currentMetric.source_service;
+      if (sourceService === 'ingress.istio-system.svc.cluster.local') {
+        sourceService = 'INTERNET';
+      }
+
+      const responseCode = currentMetric.response_code;
+
+      // Calculate number of requests seen in the latest time period
+      const oldViewCount = parseInt(currentValues[0][1], 10);
+      const newViewCount = parseInt(currentValues[1][1], 10);
+      const trafficSeen = newViewCount - oldViewCount;
+
+      const node = this.getNode(destinationService, nodes);
+      const connection = this.getConnection(sourceService, destinationService, connections);
+
+      this.updateConnectionMetrics(connection.metrics, responseCode, trafficSeen);
+
+      node.renderer = 'region';
+      node.layout = 'ltrTree';
+      node.name = destinationService;
+      node.maxVolume = 10000;
+      nodes.push(node);
+
+      connection.source = sourceService;
+      connection.target = destinationService;
+
+      connections.push(connection);
+    }
+
+    // Create node representing ingress
+    const ingressNode = { name: 'INTERNET' };
+    nodes.push(ingressNode);
+
+    // Add ingress and other mandatory details
+    trafficData.renderer = 'region';
+    trafficData.name = 'edge';
+    trafficData.maxVolume = 10;
+    trafficData.entryNode = 'INTERNET';
+    trafficData.nodes = nodes;
+    trafficData.displayOptions = { showLabels: true };
+    trafficData.nodes = nodes;
+    trafficData.connections = connections;
+    return trafficData;
   }
 
 
