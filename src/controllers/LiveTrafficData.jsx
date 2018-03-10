@@ -40,9 +40,13 @@ class LiveTrafficData {
       const jsonBody = JSON.parse(body);
 
       const trafficData = this.buildTrafficDataObject(jsonBody);
-
-      setState({ trafficData: trafficData });
+      const detailsPanelData = this.buildDetailsPanelObject(jsonBody);
+      setState({ trafficData: trafficData, detailsPanel: detailsPanelData });
     }
+  }
+
+
+  buildDetailsPanelObject(body) {
   }
 
 
@@ -70,6 +74,9 @@ class LiveTrafficData {
       const newViewCount = parseInt(currentValues[1][1], 10);
       const trafficSeen = newViewCount - oldViewCount;
 
+      // Seems to only create nodes in the graph for destination services
+      // So unless the source appears as a destination service somewhere else it won't render
+      // Source names given by Prometheus is the name of the deployment and not the service
       const node = this.getNode(destinationService, nodes);
       const connection = this.getConnection(sourceService, destinationService, connections);
 
