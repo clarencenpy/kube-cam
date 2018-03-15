@@ -41,12 +41,95 @@ class LiveTrafficData {
 
       const trafficData = this.buildTrafficDataObject(jsonBody);
       const detailsPanelData = this.buildDetailsPanelObject(jsonBody);
-      setState({ trafficData: trafficData, detailsPanel: detailsPanelData });
+
+      setState({ trafficData: trafficData, details: detailsPanelData });
     }
   }
 
 
   buildDetailsPanelObject(body) {
+    const detailsData = {};
+
+    const details = [];
+
+    for (let i = 0; i < body.data.result.length; i += 1) {
+      const currentItem = body.data.result[i];
+      const currentMetric = currentItem.metric;
+      const currentValues = currentItem.values;
+
+      const destinationService = currentMetric.destination_service;
+      let sourceService = currentMetric.source_service;
+      if (sourceService === 'ingress.istio-system.svc.cluster.local') {
+        sourceService = 'INTERNET';
+      }
+
+      const responseCode = currentMetric.response_code;
+
+      // Calculate number of requests seen in the latest time period
+      const oldViewCount = parseInt(currentValues[0][1], 10);
+      const newViewCount = parseInt(currentValues[1][1], 10);
+      const trafficSeen = newViewCount - oldViewCount;
+
+      const node = this.getDetailsNode(destinationService, details);
+      node.name = destinationService;
+
+      node.metrics.total += trafficSeen;
+      this.updateConnectionMetrics(node.metrics, responseCode, trafficSeen);
+
+      const incomingNodeDetails = this.getDetailsIncomingNode(sourceService, node.incoming);
+      incomingNodeDetails.name = sourceService;
+      this.updateIncomingNode(responseCode, trafficSeen, incomingNodeDetails);
+      node.incoming.push(incomingNodeDetails);
+
+      details.push(node);
+    }
+
+    detailsData.details = details;
+    return detailsData;
+  }
+
+
+  updateIncomingNode(code, seen, details) {
+    const type = code.charAt(0);
+
+    const ResponseCode = {
+      SUCCESS: '2',
+      CLIENTERROR: '4',
+      SERVERERROR: '5',
+    };
+
+    if (type !== ResponseCode.SUCCESS) {
+      details.errors += seen;
+    }
+    details.total += seen;
+  }
+
+  getDetailsIncomingNode(serviceName, services) {
+    for (let i = 0; i < services.length; i += 1) {
+      if (services[i].name === serviceName) {
+        const node = services[i];
+        services.splice(i, 1);
+        return node;
+      }
+    }
+    return { name: '', errors: 0, total: 0 };
+  }
+
+
+  getDetailsNode(serviceName, services) {
+    for (let i = 0; i < services.length; i += 1) {
+      if (services[i].name === serviceName) {
+        const node = services[i];
+        services.splice(i, 1);
+        return node;
+      }
+    }
+    const metrics = {};
+    metrics.normal = 0;
+    metrics.warning = 0;
+    metrics.danger = 0;
+    metrics.total = 0;
+    return { name: '', incoming: [], metrics: metrics };
   }
 
 
