@@ -46,7 +46,7 @@ kubectl -n istio-system port-forward $(kubectl -n istio-system get pod -l app=pr
 Start the kube-cam application.
 
 ```
-npm init
+npm install
 
 npm run dev
 ```
@@ -57,15 +57,11 @@ Visit [http://localhost:8080](http://localhost:8080) in your browser.
 
 ### E2E tests
 
-Explain what these tests test and why
-
 ```
-Give an example
+npm test
 ```
 
 ### Style
-
-Uses [ESLint](https://eslint.org/).
 
 ```
 npm run lint
