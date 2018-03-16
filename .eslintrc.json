@@ -18,7 +18,8 @@
       "class-methods-use-this": "off",
       "object-shorthand": "off",
       "function-paren-newline": ["error", "never"],
-      "no-param-reassign": "off"
+      "no-param-reassign": "off",
+      "react/forbid-prop-types": "off"
     },
     "env":{
       "node": true,

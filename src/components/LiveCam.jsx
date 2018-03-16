@@ -16,10 +16,8 @@ class LiveCam extends React.Component {
         showLabels: true,
         allowDraggingOfNodes: true,
       },
-      physicsOptions: undefined,
-      filters: [],
-      searchTerm: undefined,
-      modes: undefined,
+      leftCol: 12,
+      rightCol: 0,
     };
 
     this.interval = undefined;
@@ -46,40 +44,35 @@ class LiveCam extends React.Component {
 
 
   objectHighlighted = (object) => {
-    if (object.type === 'node') {
-      this.setState({ objectToHighlight: object.getName() });
+    if (object !== undefined && object.type === 'node') {
+      this.setState({ objectToHighlight: object.getName(), leftCol: 8, rightCol: 4 });
+    } else {
+      this.setState({ objectToHighlight: undefined, leftCol: 12, rightCol: 0 });
     }
   };
 
 
   render() {
-    const leftCol = this.state.objectToHighlight ? 8 : 12;
-    const rightCol = this.state.objectToHighlight ? 4 : 0;
     return (
       <Grid>
-        <Col md={leftCol}>
+        <Col md={this.state.leftCol}>
           <Vizceral
             traffic={this.state.trafficData}
             view={this.state.currentView}
             showLabels={this.state.displayOptions.showLabels}
             physicsOptions={this.state.physicsOptions}
-            filters={this.state.filters}
-            viewChanged={this.viewChanged}
-            viewUpdated={this.viewUpdated}
             objectHighlighted={this.objectHighlighted}
-            nodeContextSizeChanged={this.nodeContextSizeChanged}
-            matchesFound={this.matchesFound}
-            match={this.state.searchTerm}
-            modes={this.state.modes}
+            objectToHighlight={this.state.objectToHighlight}
             allowDraggingOfNodes={this.state.displayOptions.allowDraggingOfNodes}
           />
         </Col>
-        <Col md={rightCol}>
+        <Col md={this.state.rightCol}>
           {
             this.state.objectToHighlight &&
             <DetailsPanel
               details={this.state.details}
               highlightedNode={this.state.objectToHighlight}
+              objectHighlighted={this.objectHighlighted}
             />
           }
         </Col>
