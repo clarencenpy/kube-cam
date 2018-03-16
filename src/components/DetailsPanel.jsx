@@ -31,6 +31,18 @@ class DetailsPanel extends React.Component {
       </tr>
     ));
 
+    const normalStyle = {
+      color: '#BAD5ED',
+    };
+
+    const warningStyle = {
+      color: '#FFB949',
+    };
+
+    const dangerStyle = {
+      color: '#FF3535',
+    };
+
     return (
       <Panel>
         <Panel.Heading>
@@ -40,7 +52,7 @@ class DetailsPanel extends React.Component {
           </h5>
         </Panel.Heading>
         <Panel.Body>
-          <h6>Traffic Summary</h6>
+          <h4>Traffic Summary</h4>
           <Table>
             <thead>
               <tr>
@@ -50,15 +62,21 @@ class DetailsPanel extends React.Component {
             </thead>
             <tbody>
               <tr>
-                <td>200s</td>
+                <td>
+                  <Glyphicon glyph="chevron-right" style={normalStyle} />&nbsp;200s
+                </td>
                 <td>{this.state.details[index].metrics.normal}</td>
               </tr>
               <tr>
-                <td>400s</td>
+                <td>
+                  <Glyphicon glyph="chevron-right" style={warningStyle} />&nbsp;400s
+                </td>
                 <td>{this.state.details[index].metrics.warning}</td>
               </tr>
               <tr>
-                <td>500s</td>
+                <td>
+                  <Glyphicon glyph="chevron-right" style={dangerStyle} />&nbsp;500s
+                </td>
                 <td>{this.state.details[index].metrics.danger}</td>
               </tr>
               <tr>
@@ -68,7 +86,7 @@ class DetailsPanel extends React.Component {
             </tbody>
           </Table>
           <br />
-          <h6>Incoming Traffic</h6>
+          <h4>Incoming Traffic</h4>
           <Table>
             <thead>
               <tr>
