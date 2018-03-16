@@ -1,8 +1,10 @@
 'use strict';
 
 import React from 'react';
+import { Grid, Col } from 'react-bootstrap';
 import Vizceral from 'vizceral-react';
 import LiveTrafficData from '../controllers/LiveTrafficData';
+import DetailsPanel from './DetailsPanel';
 
 class LiveCam extends React.Component {
   constructor(props) {
@@ -14,10 +16,8 @@ class LiveCam extends React.Component {
         showLabels: true,
         allowDraggingOfNodes: true,
       },
-      physicsOptions: undefined,
-      filters: [],
-      searchTerm: undefined,
-      modes: undefined,
+      leftCol: 12,
+      rightCol: 0,
     };
 
     this.interval = undefined;
@@ -43,25 +43,40 @@ class LiveCam extends React.Component {
   }
 
 
+  objectHighlighted = (object) => {
+    if (object !== undefined && object.type === 'node') {
+      this.setState({ objectToHighlight: object.getName(), leftCol: 8, rightCol: 4 });
+    } else {
+      this.setState({ objectToHighlight: undefined, leftCol: 12, rightCol: 0 });
+    }
+  };
+
+
   render() {
     return (
-      <div id="vizceral-container">
-        <Vizceral
-          traffic={this.state.trafficData}
-          view={this.state.currentView}
-          showLabels={this.state.displayOptions.showLabels}
-          physicsOptions={this.state.physicsOptions}
-          filters={this.state.filters}
-          viewChanged={this.viewChanged}
-          viewUpdated={this.viewUpdated}
-          objectHighlighted={this.objectHighlighted}
-          nodeContextSizeChanged={this.nodeContextSizeChanged}
-          matchesFound={this.matchesFound}
-          match={this.state.searchTerm}
-          modes={this.state.modes}
-          allowDraggingOfNodes={this.state.displayOptions.allowDraggingOfNodes}
-        />
-      </div>
+      <Grid>
+        <Col md={this.state.leftCol}>
+          <Vizceral
+            traffic={this.state.trafficData}
+            view={this.state.currentView}
+            showLabels={this.state.displayOptions.showLabels}
+            physicsOptions={this.state.physicsOptions}
+            objectHighlighted={this.objectHighlighted}
+            objectToHighlight={this.state.objectToHighlight}
+            allowDraggingOfNodes={this.state.displayOptions.allowDraggingOfNodes}
+          />
+        </Col>
+        <Col md={this.state.rightCol}>
+          {
+            this.state.objectToHighlight &&
+            <DetailsPanel
+              details={this.state.details}
+              highlightedNode={this.state.objectToHighlight}
+              objectHighlighted={this.objectHighlighted}
+            />
+          }
+        </Col>
+      </Grid>
     );
   }
 }
