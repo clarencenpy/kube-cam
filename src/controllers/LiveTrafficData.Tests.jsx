@@ -11,6 +11,7 @@ describe('LiveTrafficData', () => {
   let oneConnection;
   const srcSvc = 'svc2';
   const dstSvc = 'svc1';
+  const ingressSvc = 'Ingress';
 
 
   before(() => {
@@ -47,11 +48,13 @@ describe('LiveTrafficData', () => {
 
 
   describe('#buildDetailsPanelObject()', () => {
-    it('should return panel with 1 incoming node', () => {
+    it('should return panel with 1 incoming node and ingress node', () => {
       const panelObj = liveTrafficData.buildDetailsPanelObject(oneConnection);
-      assert.equal(panelObj.details.length, 1);
+      assert.equal(panelObj.details.length, 2);
       assert.equal(panelObj.details[0].incoming.length, 1);
       assert.equal(panelObj.details[0].incoming[0].name, srcSvc);
+      assert.equal(panelObj.details[1].incoming.length, 0);
+      assert.equal(panelObj.details[1].name, ingressSvc);
     });
   });
 });

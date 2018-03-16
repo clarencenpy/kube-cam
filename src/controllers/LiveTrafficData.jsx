@@ -60,7 +60,7 @@ class LiveTrafficData {
       const destinationService = currentMetric.destination_service;
       let sourceService = currentMetric.source_service;
       if (sourceService === 'ingress.istio-system.svc.cluster.local') {
-        sourceService = 'INTERNET';
+        sourceService = 'Ingress';
       }
 
       const responseCode = currentMetric.response_code;
@@ -83,6 +83,16 @@ class LiveTrafficData {
 
       details.push(node);
     }
+
+    // Hardcode ingress node
+    const ingressNodeDetails = { name: 'Ingress' };
+    ingressNodeDetails.incoming = [];
+    ingressNodeDetails.metrics = {};
+    ingressNodeDetails.metrics.normal = 0;
+    ingressNodeDetails.metrics.warning = 0;
+    ingressNodeDetails.metrics.danger = 0;
+    ingressNodeDetails.metrics.total = 0;
+    details.push(ingressNodeDetails);
 
     detailsData.details = details;
     return detailsData;
@@ -147,7 +157,7 @@ class LiveTrafficData {
       const destinationService = currentMetric.destination_service;
       let sourceService = currentMetric.source_service;
       if (sourceService === 'ingress.istio-system.svc.cluster.local') {
-        sourceService = 'INTERNET';
+        sourceService = 'Ingress';
       }
 
       const responseCode = currentMetric.response_code;
@@ -178,14 +188,14 @@ class LiveTrafficData {
     }
 
     // Create node representing ingress
-    const ingressNode = { name: 'INTERNET' };
+    const ingressNode = { name: 'Ingress' };
     nodes.push(ingressNode);
 
     // Add ingress and other mandatory details
     trafficData.renderer = 'region';
     trafficData.name = 'edge';
     trafficData.maxVolume = 10;
-    trafficData.entryNode = 'INTERNET';
+    trafficData.entryNode = 'Ingress';
     trafficData.nodes = nodes;
     trafficData.displayOptions = { showLabels: true };
     trafficData.nodes = nodes;
