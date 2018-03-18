@@ -17,6 +17,7 @@ spec:
     metadata:
       labels:
         app: frontend-service
+        version: v1
       namespace: default
     spec:
       containers:
@@ -58,6 +59,7 @@ spec:
     metadata:
       labels:
         app: backend-service
+        version: v1
       namespace: default
     spec:
       containers:
@@ -103,3 +105,4 @@ spec:
           serviceName: frontend-service
           servicePort: 80
 ---
+

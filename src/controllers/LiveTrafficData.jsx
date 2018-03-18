@@ -57,11 +57,7 @@ class LiveTrafficData {
       const currentMetric = currentItem.metric;
       const currentValues = currentItem.values;
 
-      const destinationService = currentMetric.destination_service;
-      let sourceService = currentMetric.source_service;
-      if (sourceService === 'ingress.istio-system.svc.cluster.local') {
-        sourceService = 'Ingress';
-      }
+      const names = this.getServiceNames(currentMetric);
 
       const responseCode = currentMetric.response_code;
 
@@ -70,14 +66,14 @@ class LiveTrafficData {
       const newViewCount = parseInt(currentValues[1][1], 10);
       const trafficSeen = newViewCount - oldViewCount;
 
-      const node = this.getDetailsNode(destinationService, details);
-      node.name = destinationService;
+      const node = this.getDetailsNode(names.dst, details);
+      node.name = names.dst;
 
       node.metrics.total += trafficSeen;
       this.updateConnectionMetrics(node.metrics, responseCode, trafficSeen);
 
-      const incomingNodeDetails = this.getDetailsIncomingNode(sourceService, node.incoming);
-      incomingNodeDetails.name = sourceService;
+      const incomingNodeDetails = this.getDetailsIncomingNode(names.src, node.incoming);
+      incomingNodeDetails.name = names.src;
       this.updateIncomingNode(responseCode, trafficSeen, incomingNodeDetails);
       node.incoming.push(incomingNodeDetails);
 
@@ -113,6 +109,7 @@ class LiveTrafficData {
     }
     details.total += seen;
   }
+
 
   getDetailsIncomingNode(serviceName, services) {
     for (let i = 0; i < services.length; i += 1) {
@@ -154,11 +151,7 @@ class LiveTrafficData {
       const currentMetric = currentItem.metric;
       const currentValues = currentItem.values;
 
-      const destinationService = currentMetric.destination_service;
-      let sourceService = currentMetric.source_service;
-      if (sourceService === 'ingress.istio-system.svc.cluster.local') {
-        sourceService = 'Ingress';
-      }
+      const names = this.getServiceNames(currentMetric);
 
       const responseCode = currentMetric.response_code;
 
@@ -170,19 +163,19 @@ class LiveTrafficData {
       // Seems to only create nodes in the graph for destination services
       // So unless the source appears as a destination service somewhere else it won't render
       // Source names given by Prometheus is the name of the deployment and not the service
-      const node = this.getNode(destinationService, nodes);
-      const connection = this.getConnection(sourceService, destinationService, connections);
+      const node = this.getNode(names.dst, nodes);
+      const connection = this.getConnection(names.src, names.dst, connections);
 
       this.updateConnectionMetrics(connection.metrics, responseCode, trafficSeen);
 
       node.renderer = 'region';
       node.layout = 'ltrTree';
-      node.name = destinationService;
+      node.name = names.dst;
       node.maxVolume = 10000;
       nodes.push(node);
 
-      connection.source = sourceService;
-      connection.target = destinationService;
+      connection.source = names.src;
+      connection.target = names.dst;
 
       connections.push(connection);
     }
@@ -201,6 +194,20 @@ class LiveTrafficData {
     trafficData.nodes = nodes;
     trafficData.connections = connections;
     return trafficData;
+  }
+
+
+  getServiceNames(data) {
+    const destinationService = `${data.destination_service} ${data.destination_version}`;
+
+    let sourceService = data.source_service;
+    if (sourceService === 'ingress.istio-system.svc.cluster.local') {
+      sourceService = 'Ingress';
+    } else {
+      sourceService = `${data.source_service} ${data.source_version}`;
+    }
+
+    return { src: sourceService, dst: destinationService };
   }
 
 
