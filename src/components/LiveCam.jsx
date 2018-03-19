@@ -1,10 +1,11 @@
 'use strict';
 
 import React from 'react';
-import { Grid, Col } from 'react-bootstrap';
+import { Grid, Col, Row } from 'react-bootstrap';
 import Vizceral from 'vizceral-react';
-import LiveTrafficData from '../controllers/LiveTrafficData';
 import DetailsPanel from './DetailsPanel';
+import Nodecrumb from './Nodecrumb';
+import LiveTrafficData from '../controllers/LiveTrafficData';
 
 class LiveCam extends React.Component {
   constructor(props) {
@@ -52,30 +53,61 @@ class LiveCam extends React.Component {
   };
 
 
+  viewChanged = (object) => {
+    // Should only go at most one layer deep to see diff versions of a service
+    if (this.state.currentView.length < 1) {
+      this.setState({ currentView: object.view });
+    }
+  }
+
+
+  viewUpdated = () => {
+    this.setState({});
+  }
+
+
+  navigateHome = () => {
+    let currentView = [];
+    if (this.state.currentView.length === 1) {
+      currentView = [this.state.currentView[0]];
+    }
+    currentView.pop();
+    this.setState({ currentView: currentView });
+  }
+
+
   render() {
     return (
       <Grid>
-        <Col md={this.state.leftCol}>
-          <Vizceral
-            traffic={this.state.trafficData}
-            view={this.state.currentView}
-            showLabels={this.state.displayOptions.showLabels}
-            physicsOptions={this.state.physicsOptions}
-            objectHighlighted={this.objectHighlighted}
-            objectToHighlight={this.state.objectToHighlight}
-            allowDraggingOfNodes={this.state.displayOptions.allowDraggingOfNodes}
-          />
-        </Col>
-        <Col md={this.state.rightCol}>
-          {
-            this.state.objectToHighlight &&
-            <DetailsPanel
-              details={this.state.details}
-              highlightedNode={this.state.objectToHighlight}
+        <Nodecrumb
+          path={this.state.currentView}
+          navigateHome={this.navigateHome}
+        />
+        <Row>
+          <Col md={this.state.leftCol}>
+            <Vizceral
+              traffic={this.state.trafficData}
+              view={this.state.currentView}
+              showLabels={this.state.displayOptions.showLabels}
+              physicsOptions={this.state.physicsOptions}
               objectHighlighted={this.objectHighlighted}
+              objectToHighlight={this.state.objectToHighlight}
+              allowDraggingOfNodes={this.state.displayOptions.allowDraggingOfNodes}
+              viewChanged={this.viewChanged}
+              viewUpdated={this.viewUpdated}
             />
-          }
-        </Col>
+          </Col>
+          <Col md={this.state.rightCol}>
+            {
+              this.state.objectToHighlight &&
+              <DetailsPanel
+                details={this.state.details}
+                highlightedNode={this.state.objectToHighlight}
+                objectHighlighted={this.objectHighlighted}
+              />
+            }
+          </Col>
+        </Row>
       </Grid>
     );
   }

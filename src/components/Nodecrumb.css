@@ -1,0 +1,7 @@
+.breadcrumb {
+  background-color: #424242;
+}
+
+.breadcrumb>.active {
+  color: #F5F5F5;
+}
