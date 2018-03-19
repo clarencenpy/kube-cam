@@ -2,23 +2,22 @@
 
 'use strict';
 
-import LiveTrafficData from './LiveTrafficData';
+import TrafficFlow from './TrafficFlow';
 
 const assert = require('assert');
 
-describe('LiveTrafficData', () => {
-  let liveTrafficData;
+describe('TrafficFlow', () => {
+  let trafficFlow;
   let graph1;
   let graph2;
   const srcSvc = 'svc2';
   const dstSvc = 'svc1';
   const v1 = 'v1';
   const v2 = 'v2';
-  const ingressSvc = 'Ingress';
 
 
   before(() => {
-    liveTrafficData = new LiveTrafficData();
+    trafficFlow = new TrafficFlow();
 
     // Build sample object
     const conn1 = {};
@@ -43,7 +42,7 @@ describe('LiveTrafficData', () => {
 
   describe('#buildTrafficDataObject()', () => {
     it('should return graph with 2 vertices and 1 edge with 5 traffic', () => {
-      const trafficDataObj = liveTrafficData.buildTrafficDataObject(graph1);
+      const trafficDataObj = trafficFlow.buildTrafficDataObject(graph1);
       assert.equal(trafficDataObj.nodes.length, 2);
       assert.equal(trafficDataObj.connections.length, 1);
       assert.equal(trafficDataObj.connections[0].metrics.normal, 5);
@@ -53,34 +52,11 @@ describe('LiveTrafficData', () => {
 
   describe('#buildTrafficDataObject()', () => {
     it('different svc versions should map to diff vertices', () => {
-      const data = liveTrafficData.buildTrafficDataObject(graph2);
+      const data = trafficFlow.buildTrafficDataObject(graph2);
       assert.equal(data.nodes.length, 3);
       assert.equal(data.connections.length, 2);
       assert.equal(data.nodes[0].name, `${dstSvc} ${v1}`);
       assert.equal(data.nodes[1].name, `${dstSvc} ${v2}`);
-    });
-  });
-
-
-  describe('#buildDetailsPanelObject()', () => {
-    it('should return panel with 5 green 0 yellow 0 red', () => {
-      const panelObj = liveTrafficData.buildDetailsPanelObject(graph1);
-      assert.equal(panelObj.details[0].metrics.normal, 5);
-      assert.equal(panelObj.details[0].metrics.total, 5);
-      assert.equal(panelObj.details[0].metrics.warning, 0);
-      assert.equal(panelObj.details[0].metrics.danger, 0);
-    });
-  });
-
-
-  describe('#buildDetailsPanelObject()', () => {
-    it('should return panel with 1 incoming node and ingress node', () => {
-      const panelObj = liveTrafficData.buildDetailsPanelObject(graph1);
-      assert.equal(panelObj.details.length, 2);
-      assert.equal(panelObj.details[0].incoming.length, 1);
-      assert.equal(panelObj.details[0].incoming[0].name, `${srcSvc} ${v1}`);
-      assert.equal(panelObj.details[1].incoming.length, 0);
-      assert.equal(panelObj.details[1].name, ingressSvc);
     });
   });
 });
