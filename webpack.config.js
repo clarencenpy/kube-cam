@@ -9,7 +9,8 @@ module.exports = {
   entry: './src/app.jsx',
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    publicPath: '/'
   },
   module: {
     loaders: [
@@ -35,9 +36,11 @@ module.exports = {
     net: 'empty',
     tls: 'empty'
   },
+  devServer: {
+    historyApiFallback: true,
+  },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Vizceral',
       template: './src/index.html',
       inject: true
     })
