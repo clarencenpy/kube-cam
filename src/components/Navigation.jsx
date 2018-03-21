@@ -3,6 +3,7 @@
 import React from 'react';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
 
 import './Navigation.css';
 
@@ -17,10 +18,10 @@ class Navigation extends React.Component {
           <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
-          <Nav>
-            <NavItem eventKey={1}>
-              <Link to='/history'>History</Link>
-            </NavItem>
+          <Nav id='ugh'>
+            <LinkContainer to='/history'>
+              <NavItem eventKey={1}>History</NavItem>
+            </LinkContainer>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
