@@ -1,9 +1,10 @@
 'use strict';
 
 import React from 'react';
-import { Grid, Col, Row } from 'react-bootstrap';
+import { Grid, Col, Panel, Row } from 'react-bootstrap';
 import Vizceral from 'vizceral-react';
 import DetailsPanel from './DetailsPanel';
+import HistoricalTrafficData from '../controllers/HistoricalTrafficData';
 import Nodecrumb from './Nodecrumb';
 import TimePicker from './TimePicker';
 
@@ -19,7 +20,16 @@ class HistoryCam extends React.Component {
       },
       leftCol: 12,
       rightCol: 0,
+      currentTimeShown: undefined,
     };
+
+    this.traffic = new HistoricalTrafficData();
+    this.updateData = this.updateTrafficData.bind(this);
+  }
+
+
+  updateTrafficData(startTime, endTime) {
+    this.traffic.updateTrafficData(startTime, endTime, this.setState.bind(this));
   }
 
 
@@ -60,7 +70,7 @@ class HistoryCam extends React.Component {
       <Grid>
         <Row>
           <Col md={12}>
-            <TimePicker onSelectTime={this.updateTrafficData} />
+            <TimePicker onSelectTime={this.updateData} />
           </Col>
         </Row>
         <Row>
@@ -69,6 +79,14 @@ class HistoryCam extends React.Component {
             navigateHome={this.navigateHome}
           />
         </Row>
+        {
+          this.state.currentTimeShown &&
+          <Row>
+            <Panel>
+              <Panel.Body>{this.state.currentTimeShown}</Panel.Body>
+            </Panel>
+          </Row>
+        }
         <Row>
           <Col md={this.state.leftCol}>
             <Vizceral
