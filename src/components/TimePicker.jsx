@@ -53,13 +53,13 @@ class TimePicker extends React.Component {
         <Col md={3}>
           <FormGroup>
             <ControlLabel>Start Time (UTC):</ControlLabel>
-            <Datetime value={this.state.startTime} onChange={this.handleStartTime} />
+            <Datetime value={this.state.startTime} onChange={this.handleStartTime} utc={true} />
           </FormGroup>
         </Col>
         <Col md={3}>
           <FormGroup>
             <ControlLabel>End Time (UTC):</ControlLabel>
-            <Datetime value={this.state.endTime} onChange={this.handleEndTime} />
+            <Datetime value={this.state.endTime} onChange={this.handleEndTime} utc={true} />
           </FormGroup>
         </Col>
         <br />
