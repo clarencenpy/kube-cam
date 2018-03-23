@@ -20,7 +20,10 @@ class HistoryCam extends React.Component {
       },
       leftCol: 12,
       rightCol: 0,
+
       currentTimeShown: undefined,
+      startTime: undefined,
+      endTime: undefined,
     };
 
     this.traffic = new HistoricalTrafficData();
@@ -51,7 +54,11 @@ class HistoryCam extends React.Component {
 
 
   viewUpdated = () => {
-    this.setState({});
+    const startTime = this.state.startTime;
+    const endTime = this.state.endTime;
+    if (!startTime.isSame(endTime)) {
+      this.traffic.updateTrafficData(startTime, endTime, this.setState.bind(this));
+    }
   }
 
 

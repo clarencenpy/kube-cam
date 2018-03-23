@@ -15,17 +15,15 @@ class HistoricalTrafficData {
 
 
   updateTrafficData(start, end, updateState) {
-    if (start.isSame(end)) {
-      return;
-    }
     const startTimeStr = start.toISOString();
     const endTimeStr = end.toISOString();
 
     const buildAndUpdateTrafficWrapper = (setState, startTime, endTime) =>
       (err, resp, body) => this.buildAndUpdateTraffic(err, resp, body, setState,
         startTime, endTime);
-
-    this.prometheusClient.getTrafficData(startTimeStr, endTimeStr, this.requestRate,
+    const windowStart = startTimeStr;
+    const windowEnd = start.add(this.requestRate, 'seconds').toISOString();
+    this.prometheusClient.getTrafficData(windowStart, windowEnd, this.requestRate,
       buildAndUpdateTrafficWrapper(updateState, start, end));
   }
 
@@ -35,18 +33,14 @@ class HistoricalTrafficData {
       console.log(err);
     } else {
       const jsonBody = JSON.parse(body);
+      console.log(JSON.stringify(jsonBody));
 
       const trafficData = this.trafficFlow.buildTrafficDataObject(jsonBody);
       const detailsPanelData = this.detailsPanel.buildDetailsPanelObject(jsonBody);
       const startTimeStr = startTime.toISOString();
+      startTime = startTime.add(this.requestRate, 'seconds');
       setState({ trafficData: trafficData, details: detailsPanelData,
-         currentTimeShown: startTimeStr },
-        () => {
-          console.log(startTimeStr);
-          console.log(trafficData);
-          startTime = startTime.add(this.requestRate, 'seconds');
-          this.updateTrafficData(startTime, endTime, setState);
-        });
+         currentTimeShown: startTimeStr, startTime: startTime, endTime: endTime });
     }
   }
 }
