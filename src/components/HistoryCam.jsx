@@ -54,8 +54,8 @@ class HistoryCam extends React.Component {
 
 
   viewUpdated = () => {
-    const startTime = this.state.startTime;
-    const endTime = this.state.endTime;
+    const { startTime } = this.state;
+    const { endTime } = this.state;
     if (!startTime.isSame(endTime)) {
       this.traffic.updateTrafficData(startTime, endTime, this.setState.bind(this));
     }

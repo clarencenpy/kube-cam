@@ -16,7 +16,6 @@ class HistoricalTrafficData {
 
   updateTrafficData(start, end, updateState) {
     const startTimeStr = start.toISOString();
-    const endTimeStr = end.toISOString();
 
     const buildAndUpdateTrafficWrapper = (setState, startTime, endTime) =>
       (err, resp, body) => this.buildAndUpdateTraffic(err, resp, body, setState,
@@ -39,8 +38,13 @@ class HistoricalTrafficData {
       const detailsPanelData = this.detailsPanel.buildDetailsPanelObject(jsonBody);
       const startTimeStr = startTime.toISOString();
       startTime = startTime.add(this.requestRate, 'seconds');
-      setState({ trafficData: trafficData, details: detailsPanelData,
-         currentTimeShown: startTimeStr, startTime: startTime, endTime: endTime });
+      setState({
+        trafficData: trafficData,
+        details: detailsPanelData,
+        currentTimeShown: startTimeStr,
+        startTime: startTime,
+        endTime: endTime,
+      });
     }
   }
 }
