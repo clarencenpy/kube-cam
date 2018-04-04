@@ -32,7 +32,6 @@ class HistoricalTrafficData {
       console.log(err);
     } else {
       const jsonBody = JSON.parse(body);
-      console.log(JSON.stringify(jsonBody));
 
       const trafficData = this.trafficFlow.buildTrafficDataObject(jsonBody);
       const detailsPanelData = this.detailsPanel.buildDetailsPanelObject(jsonBody);
