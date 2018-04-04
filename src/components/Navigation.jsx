@@ -2,6 +2,9 @@
 
 import React from 'react';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
+
 import './Navigation.css';
 
 class Navigation extends React.Component {
@@ -10,18 +13,15 @@ class Navigation extends React.Component {
       <Navbar>
         <Navbar.Header>
           <Navbar.Brand>
-            <a href="/">kube-cam</a>
+            <Link to='/'>kube-cam</Link>
           </Navbar.Brand>
           <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
-          <Nav>
-            <NavItem eventKey={1} href="#">
-              Link
-            </NavItem>
-            <NavItem eventKey={2} href="#">
-              Link
-            </NavItem>
+          <Nav id='ugh'>
+            <LinkContainer to='/history'>
+              <NavItem eventKey={1}>History</NavItem>
+            </LinkContainer>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

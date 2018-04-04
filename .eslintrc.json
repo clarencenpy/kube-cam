@@ -19,7 +19,12 @@
       "object-shorthand": "off",
       "function-paren-newline": ["error", "never"],
       "no-param-reassign": "off",
-      "react/forbid-prop-types": "off"
+      "react/forbid-prop-types": "off",
+      "jsx-quotes": [2, "prefer-single"],
+      "jsx-a11y/anchor-is-valid": [ "error", {
+        "components": [ "Link" ],
+        "specialLink": [ "to" ]
+      }]
     },
     "env":{
       "node": true,

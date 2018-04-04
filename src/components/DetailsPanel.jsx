@@ -48,7 +48,7 @@ class DetailsPanel extends React.Component {
         <Panel.Heading>
           <h5>
             {this.state.details[index].name}
-            <Glyphicon onClick={this.props.objectHighlighted} glyph="remove" id="panel-close" />
+            <Glyphicon onClick={this.props.objectHighlighted} glyph='remove' id='panel-close' />
           </h5>
         </Panel.Heading>
         <Panel.Body>
@@ -63,19 +63,19 @@ class DetailsPanel extends React.Component {
             <tbody>
               <tr>
                 <td>
-                  <Glyphicon glyph="chevron-right" style={normalStyle} />&nbsp;200s
+                  <Glyphicon glyph='chevron-right' style={normalStyle} />&nbsp;200s
                 </td>
                 <td>{this.state.details[index].metrics.normal}</td>
               </tr>
               <tr>
                 <td>
-                  <Glyphicon glyph="chevron-right" style={warningStyle} />&nbsp;400s
+                  <Glyphicon glyph='chevron-right' style={warningStyle} />&nbsp;400s
                 </td>
                 <td>{this.state.details[index].metrics.warning}</td>
               </tr>
               <tr>
                 <td>
-                  <Glyphicon glyph="chevron-right" style={dangerStyle} />&nbsp;500s
+                  <Glyphicon glyph='chevron-right' style={dangerStyle} />&nbsp;500s
                 </td>
                 <td>{this.state.details[index].metrics.danger}</td>
               </tr>

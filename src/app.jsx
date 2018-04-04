@@ -2,18 +2,21 @@
 
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 import './app.css';
-import LiveCam from './components/LiveCam';
+import KubeCam from './components/KubeCam';
 import Navigation from './components/Navigation';
 
 class App extends Component {
   render() {
     return (
-      <div id="app">
-        <Navigation />
-        <LiveCam />
-      </div>
+      <BrowserRouter>
+        <div>
+          <Navigation />
+          <KubeCam />
+        </div>
+      </BrowserRouter>
     );
   }
 }

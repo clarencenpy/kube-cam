@@ -1,6 +1,8 @@
 'use strict';
 
+import DetailsPanel from './DetailsPanel';
 import PrometheusClient from '../clients/PrometheusClient';
+import TrafficFlow from './TrafficFlow';
 
 const moment = require('moment');
 
@@ -8,7 +10,9 @@ class LiveTrafficData {
   constructor() {
     this.requestRate = 5;
 
+    this.detailsPanel = new DetailsPanel();
     this.prometheusClient = new PrometheusClient();
+    this.trafficFlow = new TrafficFlow();
   }
 
 
@@ -39,220 +43,10 @@ class LiveTrafficData {
     } else {
       const jsonBody = JSON.parse(body);
 
-      const trafficData = this.buildTrafficDataObject(jsonBody);
-      const detailsPanelData = this.buildDetailsPanelObject(jsonBody);
+      const trafficData = this.trafficFlow.buildTrafficDataObject(jsonBody);
+      const detailsPanelData = this.detailsPanel.buildDetailsPanelObject(jsonBody);
 
       setState({ trafficData: trafficData, details: detailsPanelData });
-    }
-  }
-
-
-  buildDetailsPanelObject(body) {
-    const detailsData = {};
-
-    const details = [];
-
-    for (let i = 0; i < body.data.result.length; i += 1) {
-      const currentItem = body.data.result[i];
-      const currentMetric = currentItem.metric;
-      const currentValues = currentItem.values;
-
-      const names = this.getServiceNames(currentMetric);
-
-      const responseCode = currentMetric.response_code;
-
-      // Calculate number of requests seen in the latest time period
-      const oldViewCount = parseInt(currentValues[0][1], 10);
-      const newViewCount = parseInt(currentValues[1][1], 10);
-      const trafficSeen = newViewCount - oldViewCount;
-
-      const node = this.getDetailsNode(names.dst, details);
-      node.name = names.dst;
-
-      node.metrics.total += trafficSeen;
-      this.updateConnectionMetrics(node.metrics, responseCode, trafficSeen);
-
-      const incomingNodeDetails = this.getDetailsIncomingNode(names.src, node.incoming);
-      incomingNodeDetails.name = names.src;
-      this.updateIncomingNode(responseCode, trafficSeen, incomingNodeDetails);
-      node.incoming.push(incomingNodeDetails);
-
-      details.push(node);
-    }
-
-    // Hardcode ingress node
-    const ingressNodeDetails = { name: 'Ingress' };
-    ingressNodeDetails.incoming = [];
-    ingressNodeDetails.metrics = {};
-    ingressNodeDetails.metrics.normal = 0;
-    ingressNodeDetails.metrics.warning = 0;
-    ingressNodeDetails.metrics.danger = 0;
-    ingressNodeDetails.metrics.total = 0;
-    details.push(ingressNodeDetails);
-
-    detailsData.details = details;
-    return detailsData;
-  }
-
-
-  updateIncomingNode(code, seen, details) {
-    const type = code.charAt(0);
-
-    const ResponseCode = {
-      SUCCESS: '2',
-      CLIENTERROR: '4',
-      SERVERERROR: '5',
-    };
-
-    if (type !== ResponseCode.SUCCESS) {
-      details.errors += seen;
-    }
-    details.total += seen;
-  }
-
-
-  getDetailsIncomingNode(serviceName, services) {
-    for (let i = 0; i < services.length; i += 1) {
-      if (services[i].name === serviceName) {
-        const node = services[i];
-        services.splice(i, 1);
-        return node;
-      }
-    }
-    return { name: '', errors: 0, total: 0 };
-  }
-
-
-  getDetailsNode(serviceName, services) {
-    for (let i = 0; i < services.length; i += 1) {
-      if (services[i].name === serviceName) {
-        const node = services[i];
-        services.splice(i, 1);
-        return node;
-      }
-    }
-    const metrics = {};
-    metrics.normal = 0;
-    metrics.warning = 0;
-    metrics.danger = 0;
-    metrics.total = 0;
-    return { name: '', incoming: [], metrics: metrics };
-  }
-
-
-  buildTrafficDataObject(body) {
-    const trafficData = {};
-
-    const nodes = [];
-    const connections = [];
-
-    for (let i = 0; i < body.data.result.length; i += 1) {
-      const currentItem = body.data.result[i];
-      const currentMetric = currentItem.metric;
-      const currentValues = currentItem.values;
-
-      const names = this.getServiceNames(currentMetric);
-
-      const responseCode = currentMetric.response_code;
-
-      // Calculate number of requests seen in the latest time period
-      const oldViewCount = parseInt(currentValues[0][1], 10);
-      const newViewCount = parseInt(currentValues[1][1], 10);
-      const trafficSeen = newViewCount - oldViewCount;
-
-      // Seems to only create nodes in the graph for destination services
-      // So unless the source appears as a destination service somewhere else it won't render
-      // Source names given by Prometheus is the name of the deployment and not the service
-      const node = this.getNode(names.dst, nodes);
-      const connection = this.getConnection(names.src, names.dst, connections);
-
-      this.updateConnectionMetrics(connection.metrics, responseCode, trafficSeen);
-
-      node.renderer = 'region';
-      node.layout = 'ltrTree';
-      node.name = names.dst;
-      node.maxVolume = 10000;
-      nodes.push(node);
-
-      connection.source = names.src;
-      connection.target = names.dst;
-
-      connections.push(connection);
-    }
-
-    // Create node representing ingress
-    const ingressNode = { name: 'Ingress' };
-    nodes.push(ingressNode);
-
-    // Add ingress and other mandatory details
-    trafficData.renderer = 'region';
-    trafficData.name = 'edge';
-    trafficData.maxVolume = 10;
-    trafficData.entryNode = 'Ingress';
-    trafficData.nodes = nodes;
-    trafficData.displayOptions = { showLabels: true };
-    trafficData.nodes = nodes;
-    trafficData.connections = connections;
-    return trafficData;
-  }
-
-
-  getServiceNames(data) {
-    const destinationService = `${data.destination_service} ${data.destination_version}`;
-
-    let sourceService = data.source_service;
-    if (sourceService === 'ingress.istio-system.svc.cluster.local') {
-      sourceService = 'Ingress';
-    } else {
-      sourceService = `${data.source_service} ${data.source_version}`;
-    }
-
-    return { src: sourceService, dst: destinationService };
-  }
-
-
-  getNode(serviceName, nodes) {
-    for (let i = 0; i < nodes.length; i += 1) {
-      if (nodes[i].name === serviceName) {
-        const node = nodes[i];
-        nodes.splice(i, 1);
-        return node;
-      }
-    }
-    return {};
-  }
-
-
-  getConnection(currSource, currDest, connections) {
-    for (let i = 0; i < connections.length; i += 1) {
-      const edgeSource = connections[i].source;
-      const edgeDest = connections[i].target;
-      if (edgeDest === currDest && currSource === edgeSource) {
-        const connection = connections[i];
-        connections.splice(i, 1);
-        return connection;
-      }
-    }
-    const metrics = { normal: 0, warning: 0, danger: 0 };
-    return { metrics };
-  }
-
-
-  updateConnectionMetrics(metrics, responseCode, seen) {
-    const type = responseCode.charAt(0);
-
-    const ResponseCode = {
-      SUCCESS: '2',
-      CLIENTERROR: '4',
-      SERVERERROR: '5',
-    };
-
-    if (type === ResponseCode.CLIENTERROR) {
-      metrics.warning += seen;
-    } else if (type === ResponseCode.SERVERERROR) {
-      metrics.danger += seen;
-    } else {
-      metrics.normal += seen;
     }
   }
 }
