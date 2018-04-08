@@ -1,0 +1,39 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: kube-cam
+  labels:
+    app: kube-cam
+  annotations:
+    sidecar.istio.io/inject: "false"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-cam
+  template:
+    metadata:
+      labels:
+        app: kube-cam
+        version: v1
+    spec:
+      containers:
+        - name: kube-cam
+          image: us.gcr.io/dev-619/kube-cam:v2
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-cam
+  labels:
+    app: kube-cam
+spec:
+  selector:
+    app: kube-cam
+  ports:
+  - name: http
+    port: 8080

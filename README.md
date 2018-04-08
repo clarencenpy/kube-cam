@@ -67,9 +67,33 @@ npm test
 npm run lint
 ```
 
-## Deployment
+## Deployment (tbd)
 
-Add additional notes about how to deploy this on a live system
+Build and tag the Kube-Cam image.
+
+```
+docker build -t kube-cam:v2 . && docker tag kube-cam:v2 us.gcr.io/dev-619/kube-cam:v2
+```
+
+Push the image to some container registry.
+
+```
+gcloud docker -- push us.gcr.io/dev-619/kube-cam:v2
+```
+
+Deploy Kube-Cam in a Kubernetes cluster.
+
+```
+kubectl apply -f config/kube-cam.yaml
+```
+
+Set up port-forwarding for the Kube-Cam application.
+
+```
+kubectl port-forward $(kubectl get pod -l app=kube-cam -o jsonpath='{.items[0].metadata.name}') 8080:8080 &
+```
+
+Visit http://localhost:8080 in your web browser.
 
 ## Built With
 * Stress

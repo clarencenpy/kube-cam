@@ -1,11 +1,10 @@
 'use strict';
 
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  devtool: 'source-map',
   entry: './src/app.jsx',
   output: {
     path: path.join(__dirname, 'dist'),
@@ -35,9 +34,6 @@ module.exports = {
     fs: 'empty',
     net: 'empty',
     tls: 'empty'
-  },
-  devServer: {
-    historyApiFallback: true,
   },
   plugins: [
     new HtmlWebpackPlugin({
