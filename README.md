@@ -67,9 +67,19 @@ npm test
 npm run lint
 ```
 
-## Deployment
+## Deployment (tbd)
 
-Add additional notes about how to deploy this on a live system
+Build the Kube-Cam image
+
+```
+docker build -t kube-cam:latest .
+```
+
+Start the Kube-Cam container
+
+```
+docker run -p 8080:80 kube-cam:latest
+```
 
 ## Built With
 * Stress
