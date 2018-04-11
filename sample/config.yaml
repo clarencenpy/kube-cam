@@ -5,25 +5,19 @@
 kind: Deployment
 apiVersion: extensions/v1beta1
 metadata:
-  name: frontend-service
-  labels:
-    app: frontend-service
+  name: frontend-service-v1
 spec:
   replicas: 1
-  selector:
-    matchLabels:
-      app: frontend-service
   template:
     metadata:
       labels:
         app: frontend-service
         version: v1
-      namespace: default
     spec:
       containers:
         - name: frontend-service
           image: us.gcr.io/dev-619/front:v1
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 5000
 ---
@@ -105,4 +99,3 @@ spec:
           serviceName: frontend-service
           servicePort: 80
 ---
-
