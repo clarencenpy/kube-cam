@@ -14,4 +14,4 @@ RUN npm run build
 FROM nginx:1.13
 
 COPY --from=webpack /dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY config/nginx.conf /etc/nginx/nginx.conf
