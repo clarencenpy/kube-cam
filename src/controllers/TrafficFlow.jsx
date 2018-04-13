@@ -32,20 +32,22 @@ class TrafficFlow {
       // So unless the source appears as a destination service somewhere else it won't render
       // Source names given by Prometheus is the name of the deployment and not the service
       const node = this.getNode(names.dst, nodes);
-      const connection = this.getConnection(names.src, names.dst, connections);
 
-      this.utils.updateConnectionMetrics(connection.metrics, responseCode, trafficSeen);
+      if (names.src !== 'unknown unknown') {
+        const connection = this.getConnection(names.src, names.dst, connections);
+
+        this.utils.updateConnectionMetrics(connection.metrics, responseCode, trafficSeen);
+        connection.source = names.src;
+        connection.target = names.dst;
+
+        connections.push(connection);
+      }
 
       node.renderer = 'region';
       node.layout = 'ltrTree';
       node.name = names.dst;
       node.maxVolume = 10000;
       nodes.push(node);
-
-      connection.source = names.src;
-      connection.target = names.dst;
-
-      connections.push(connection);
     }
 
     // Create node representing ingress
