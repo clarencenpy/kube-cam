@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import { Glyphicon, Panel, Table } from 'react-bootstrap';
+import { Glyphicon, Nav, NavItem, Panel, Table } from 'react-bootstrap';
 import './DetailsPanel.css';
 
 class DetailsPanel extends React.Component {
@@ -10,7 +10,22 @@ class DetailsPanel extends React.Component {
 
     this.state = {
       details: props.details.details,
+      activeKey: 'traffic',
+      routeRulesStyle: { display: 'none' },
+      trafficStyle: { display: 'block' },
     };
+
+    this.handleSelect = this.handleSelect.bind(this);
+  }
+
+
+  handleSelect(key, event) {
+    event.preventDefault();
+    if (key === 'traffic') {
+      this.setState({ activeKey: 'traffic', routeRulesStyle: { display: 'none' }, trafficStyle: { display: 'block' } });
+    } else {
+      this.setState({ activeKey: 'routerules', routeRulesStyle: { display: 'block' }, trafficStyle: { display: 'none' } });
+    }
   }
 
 
@@ -52,53 +67,62 @@ class DetailsPanel extends React.Component {
           </h5>
         </Panel.Heading>
         <Panel.Body>
-          <h4>Traffic Summary</h4>
-          <Table>
-            <thead>
-              <tr>
-                <th>Status</th>
-                <th>Count</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <Glyphicon glyph='chevron-right' style={normalStyle} />&nbsp;200s
-                </td>
-                <td>{this.state.details[index].metrics.normal}</td>
-              </tr>
-              <tr>
-                <td>
-                  <Glyphicon glyph='chevron-right' style={warningStyle} />&nbsp;400s
-                </td>
-                <td>{this.state.details[index].metrics.warning}</td>
-              </tr>
-              <tr>
-                <td>
-                  <Glyphicon glyph='chevron-right' style={dangerStyle} />&nbsp;500s
-                </td>
-                <td>{this.state.details[index].metrics.danger}</td>
-              </tr>
-              <tr>
-                <td>Total</td>
-                <td>{this.state.details[index].metrics.total}</td>
-              </tr>
-            </tbody>
-          </Table>
-          <br />
-          <h4>Incoming Traffic</h4>
-          <Table>
-            <thead>
-              <tr>
-                <th>Service</th>
-                <th>Errors</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {incoming}
-            </tbody>
-          </Table>
+          <Nav bsStyle='tabs' activeKey={this.state.activeKey} onSelect={this.handleSelect}>
+            <NavItem eventKey='traffic'>Traffic Summary</NavItem>
+            <NavItem eventKey='routerules'>Route Rules</NavItem>
+          </Nav>
+          <div style={this.state.trafficStyle}>
+            <h4>Traffic Summary</h4>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <Glyphicon glyph='chevron-right' style={normalStyle} />&nbsp;200s
+                  </td>
+                  <td>{this.state.details[index].metrics.normal}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <Glyphicon glyph='chevron-right' style={warningStyle} />&nbsp;400s
+                  </td>
+                  <td>{this.state.details[index].metrics.warning}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <Glyphicon glyph='chevron-right' style={dangerStyle} />&nbsp;500s
+                  </td>
+                  <td>{this.state.details[index].metrics.danger}</td>
+                </tr>
+                <tr>
+                  <td>Total</td>
+                  <td>{this.state.details[index].metrics.total}</td>
+                </tr>
+              </tbody>
+            </Table>
+            <br />
+            <h4>Incoming Traffic</h4>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Service</th>
+                  <th>Errors</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {incoming}
+              </tbody>
+            </Table>
+          </div>
+          <div style={this.state.routeRulesStyle}>
+            <h4>Route Rules</h4>
+          </div>
         </Panel.Body>
       </Panel>
     );
