@@ -19,7 +19,7 @@ const sendResponse = function sendResponse(err, resp, body, res) {
 };
 
 
-router.get('/namespaces/:namespace/:ruleName', (req, res) => {
+router.get('/namespaces/:namespace/rule/:ruleName', (req, res) => {
   const { namespace, ruleName } = req.params;
   const sendResponseWrapper = updateResponse => (err, resp, body) =>
     sendResponse(err, resp, body, updateResponse);
@@ -35,7 +35,7 @@ router.get('/namespaces/:namespace', (req, res) => {
 });
 
 
-router.put('/namespaces/:namespace/:ruleName', jsonParser, (req, res) => {
+router.put('/namespaces/:namespace/rule/:ruleName', jsonParser, (req, res) => {
   const { namespace, ruleName } = req.params;
   const sendResponseWrapper = updateResponse => (err, resp, body) =>
     sendResponse(err, resp, body, updateResponse);
@@ -45,7 +45,7 @@ router.put('/namespaces/:namespace/:ruleName', jsonParser, (req, res) => {
 });
 
 
-router.delete('/namespaces/:namespace/:ruleName', (req, res) => {
+router.delete('/namespaces/:namespace/rule/:ruleName', (req, res) => {
   const { namespace, ruleName } = req.params;
   const sendResponseWrapper = updateResponse => (err, resp, body) =>
     sendResponse(err, resp, body, updateResponse);
