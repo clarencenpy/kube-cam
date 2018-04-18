@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import { Glyphicon, Nav, NavItem, Panel, Table } from 'react-bootstrap';
+import { FormGroup, FormControl, Glyphicon, Nav, NavItem, Panel, Table } from 'react-bootstrap';
 import './DetailsPanel.css';
 
 class DetailsPanel extends React.Component {
@@ -16,6 +16,24 @@ class DetailsPanel extends React.Component {
     };
 
     this.handleSelect = this.handleSelect.bind(this);
+  }
+
+
+  componentDidMount() {
+    const { namespace, service } = this.parseHighlighedNodeName();
+    fetch(`kubecam/routerules/namespaces/${namespace}/service/${service}`)
+      .then(results => results.json())
+      .then((response) => {
+        const rules = JSON.stringify(response.items);
+        this.setState({ routeRules: rules });
+      })
+      .catch(error => console.error(error));
+  }
+
+
+  parseHighlighedNodeName() {
+    const names = this.props.highlightedNode.split(/\s|\./);
+    return { namespace: names[1], service: names[0] };
   }
 
 
@@ -57,6 +75,14 @@ class DetailsPanel extends React.Component {
     const dangerStyle = {
       color: '#FF3535',
     };
+
+    const routerules = (
+      <form>
+        <FormGroup controlId='routerules'>
+          <FormControl componentClass='textarea' value={this.state.routeRules} />
+        </FormGroup>
+      </form>
+    );
 
     return (
       <Panel>
@@ -122,6 +148,7 @@ class DetailsPanel extends React.Component {
           </div>
           <div style={this.state.routeRulesStyle}>
             <h4>Route Rules</h4>
+            {routerules}
           </div>
         </Panel.Body>
       </Panel>

@@ -37,6 +37,25 @@ Install the Prometheus add-on for Istio.
 kubectl apply -f install/kubernetes/addons/prometheus.yaml
 ```
 
+#### Setting up the kube-cam backend
+
+Setup a proxy to the Kubernetes API.
+```
+kubectl proxy --port=8081 &
+```
+
+Start the backend application.
+
+```
+cd backend
+
+npm install
+
+npm run dev
+```
+
+#### Setting up the kube-cam frontend
+
 Setup port-forwarding for Prometheus.
 
 ```
