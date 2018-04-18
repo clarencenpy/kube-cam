@@ -167,3 +167,29 @@ paths:
         description: rule
         required: true
         type: string
+  /routerules/namespaces/{namespace}/service/{service}:
+    get:
+      tags:
+      - routerules
+      summary: Find route rules by destination service
+      description: Return all route rules applied to a destination service
+      produces:
+      - application/json
+      responses:
+        200:
+          description: success
+        404:
+          description: namespace not found
+        500:
+          description: internal server error
+      parameters:
+      - name: namespace
+        in: path
+        description: namespace
+        required: true
+        type: string
+      - name: service
+        in: path
+        description: destination service name
+        required: true
+        type: string

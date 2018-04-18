@@ -52,4 +52,26 @@ router.delete('/namespaces/:namespace/rule/:ruleName', (req, res) => {
   routeRules.deleteRouteRuleByNamespaceAndName(namespace, ruleName, sendResponseWrapper(res));
 });
 
+
+router.get('/namespaces/:namespace/service/:service', (req, res) => {
+  const { namespace, service } = req.params;
+  const filterReponseByService = function filterReponseByService(err, resp, body, routeResponse) {
+    if (err) {
+      routeResponse.status(500);
+      routeResponse.type('json');
+      routeResponse.send({ error: err });
+    } else {
+      body = JSON.parse(body);
+      const filteredRules = body.items.filter(item => item.spec.destination.name === service);
+      routeResponse.status(resp.statusCode);
+      routeResponse.type('json');
+      body.items = filteredRules;
+      routeResponse.send(body);
+    }
+  };
+  const filterResponseByServiceWrapper = updateResponse => (err, resp, body) =>
+    filterReponseByService(err, resp, body, updateResponse);
+  routeRules.getRouteRulesByNamespace(namespace, filterResponseByServiceWrapper(res));
+});
+
 module.exports = router;
