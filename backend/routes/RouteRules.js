@@ -39,7 +39,7 @@ router.put('/namespaces/:namespace/rule/:ruleName', jsonParser, (req, res) => {
   const { namespace, ruleName } = req.params;
   const sendResponseWrapper = updateResponse => (err, resp, body) =>
     sendResponse(err, resp, body, updateResponse);
-  const { body } = req.body;
+  const { body } = req;
   routeRules.updateRouteRuleByNamespaceAndName(namespace, ruleName, body,
     sendResponseWrapper(res));
 });
