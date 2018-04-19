@@ -1,8 +1,10 @@
 'use strict';
 
 import React from 'react';
-import { FormGroup, FormControl, Glyphicon, Nav, NavItem, Panel, Table } from 'react-bootstrap';
+import { Alert, Button, FormGroup, FormControl, Glyphicon, Nav, NavItem, Panel, Table } from 'react-bootstrap';
+import yamljs from 'yamljs';
 import './DetailsPanel.css';
+
 
 class DetailsPanel extends React.Component {
   constructor(props) {
@@ -16,6 +18,8 @@ class DetailsPanel extends React.Component {
     };
 
     this.handleSelect = this.handleSelect.bind(this);
+    this.handleSubmitRouteRules = this.handleSubmitRouteRules.bind(this);
+    this.updateRule = this.updateRule.bind(this);
   }
 
 
@@ -24,8 +28,10 @@ class DetailsPanel extends React.Component {
     fetch(`kubecam/routerules/namespaces/${namespace}/service/${service}`)
       .then(results => results.json())
       .then((response) => {
-        const rules = JSON.stringify(response.items);
-        this.setState({ routeRules: rules });
+        const rules = response.items;
+        rules.map(rule => delete rule.metadata.resourceVersion);
+        const rulesYaml = yamljs.stringify(rules, 6);
+        this.setState({ routeRules: rulesYaml });
       })
       .catch(error => console.error(error));
   }
@@ -44,6 +50,44 @@ class DetailsPanel extends React.Component {
     } else {
       this.setState({ activeKey: 'routerules', routeRulesStyle: { display: 'block' }, trafficStyle: { display: 'none' } });
     }
+  }
+
+
+  handleSubmitRouteRules(event) {
+    event.preventDefault();
+    const jsonRules = yamljs.parse(this.state.routeRules);
+    if (typeof jsonRules !== 'object') {
+      this.setState({ updateError: 'Invalid route rule' });
+    }
+    jsonRules.map((rule) => {
+      const { namespace } = rule.metadata;
+      const { name } = rule.metadata;
+      return fetch(`kubecam/routerules/namespaces/${namespace}/rule/${name}`, {
+        body: JSON.stringify(rule),
+        headers: {
+          'content-type': 'application/json',
+        },
+        method: 'PUT',
+      })
+        .then((response) => {
+          this.setState({ respStatus: response.status });
+          return response.json();
+        })
+        .then((resp) => {
+          const respStr = JSON.stringify(resp);
+          if (this.state.respStatus !== 201) {
+            this.setState({ updateError: respStr, updateSuccess: undefined });
+          } else {
+            console.log('ughhh');
+            this.setState({ updateSuccess: respStr, updateError: undefined });
+          }
+        });
+    });
+  }
+
+
+  updateRule(event) {
+    this.setState({ routeRules: event.target.value });
   }
 
 
@@ -77,10 +121,11 @@ class DetailsPanel extends React.Component {
     };
 
     const routerules = (
-      <form>
+      <form onSubmit={this.handleSubmitRouteRules}>
         <FormGroup controlId='routerules'>
-          <FormControl componentClass='textarea' value={this.state.routeRules} />
+          <FormControl componentClass='textarea' value={this.state.routeRules} onChange={this.updateRule} />
         </FormGroup>
+        <Button type='submit' bsStyle='primary'>Submit</Button>
       </form>
     );
 
@@ -147,6 +192,23 @@ class DetailsPanel extends React.Component {
             </Table>
           </div>
           <div style={this.state.routeRulesStyle}>
+            {this.state.updateError &&
+              <div>
+                <br />
+                <Alert bsStyle='warning'>
+                  <h5>Error updating rule</h5>
+                  {this.state.updateError}
+                </Alert>
+              </div>
+            }
+            {this.state.updateSuccess &&
+              <div>
+                <br />
+                <Alert bsStyle='success'>
+                  <h5>Updated rule successfully</h5>
+                </Alert>
+              </div>
+            }
             <h4>Route Rules</h4>
             {routerules}
           </div>
