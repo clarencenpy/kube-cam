@@ -1,0 +1,20 @@
+---
+apiVersion: config.istio.io/v1alpha2
+kind: RouteRule
+metadata:
+  name: mirror-traffic-to-frontend-v2
+spec:
+  destination:
+    name: frontend-service
+  precedence: 11
+  route:
+  - labels:
+      version: v1
+    weight: 100
+  - labels:
+      version: v2
+    weight: 0
+  mirror:
+    name: frontend-service
+    labels:
+      version: v2

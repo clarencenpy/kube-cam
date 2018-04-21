@@ -1,7 +1,20 @@
 language: node_js
 node_js:
   - "8.1"
-script:
-  - npm run lint
-  - npm run build
-  - npm test
+jobs:
+  include:
+    - stage: Backend
+      script:
+        - cd backend
+        - npm install
+        - npm run lint
+        - cd ..
+    - stage: Frontend
+      script:
+        - npm run lint
+        - npm run build
+        - npm test
+cache:
+  directories:
+    - node_modules
+    - backend/node_modules

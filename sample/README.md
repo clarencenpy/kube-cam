@@ -26,6 +26,28 @@ curl $ip_address
 
 View traffic in kube-cam application in the browser at [http://...](http://...)
 
+## Deploying a sample application with mirroring
+
+Deploy second version of sample application
+
+```
+kubectl apply -f <(istioctl kube-inject -f config-frontend-v2.yaml)
+```
+
+Visit `http://localhost:8080`, verify that traffic gets routed round-robin between v1 and v2 of the frontend service.
+
+Create routing rules to route all traffic to v1 of the frontend service.
+
+```
+istioctl create -f route-mirror.yaml
+```
+
+Create routing rules to mirror traffic to v2 of the frontend service.
+
+```
+istioctl create -f route-mirror.yaml
+```
+
 ## Notes
 
 ### Sending traffic to the service

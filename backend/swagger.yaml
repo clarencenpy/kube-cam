@@ -1,0 +1,195 @@
+swagger: "2.0"
+
+info:
+  version: 1.0.0
+  title: Kube-Cam API
+  description: stuff
+
+schemes:
+  - http
+host: localhost:3000
+basePath: /kubecam
+tags:
+- name: routerules
+  description: Everything related to Istio routing rules
+paths:
+  /routerules/namespaces/{namespace}:
+    get:
+      tags:
+      - routerules
+      summary: Find route rules by namespace
+      description: Return all route rules in a namespace
+      produces:
+      - application/json
+      responses:
+        200:
+          description: success
+        404:
+          description: namespace not found
+        500:
+          description: internal server error
+      parameters:
+      - name: namespace
+        in: path
+        description: namespace
+        required: true
+        type: string
+  /routerules/namespaces/{namespace}/rule/{rule}:
+    get:
+      tags:
+      - routerules
+      summary: Find route rules details
+      description: Return details of route rule in namespace
+      produces:
+      - application/json
+      responses:
+        200:
+          description: success
+        404:
+          description: namespace or rule not found
+        500:
+          description: internal server error
+      parameters:
+      - name: namespace
+        in: path
+        description: namespace
+        required: true
+        type: string
+      - name: rule
+        in: path
+        description: rule
+        required: true
+        type: string
+    put:
+      tags:
+      - routerules
+      summary: Create or update route rule
+      description: Update route rule by name or create it if it does not exist
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        405:
+          description: invalid input
+        201:
+          description: success
+      parameters:
+      - name: namespace
+        in: path
+        description: namespace
+        required: true
+        type: string
+      - name: rule
+        in: path
+        description: rule
+        required: true
+        type: string
+      - name: body
+        in: body
+        description: JSON object representing new or updated route rule
+        required: true
+        schema:
+          type: object
+          properties:
+            kind:
+              type: string
+              example: RouteRule
+            apiVersion:
+              type: string
+              example: config.istio.io/v1alpha2
+            metadata:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: rule-name
+                namespace:
+                  type: string
+                  example: default
+                creationTimestamp:
+                  type: string
+                  example: null
+            spec:
+              type: object
+              properties:
+                destination:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                mirror:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    labels:
+                      type: object
+                      properties:
+                        version:
+                          type: string
+                precedence:
+                  type: integer
+                route:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      labels:
+                        type: object
+                        properties:
+                          version:
+                            type: string
+                      weight:
+                        type: integer
+    delete:
+      tags:
+      - routerules
+      summary: Delete route rule
+      description: Delete route rule with given name
+      produces:
+      - application/json
+      responses:
+        200:
+          description: success
+        404:
+          description: namespace or rule not found
+        500:
+          description: internal server error
+      parameters:
+      - name: namespace
+        in: path
+        description: namespace
+        required: true
+        type: string
+      - name: rule
+        in: path
+        description: rule
+        required: true
+        type: string
+  /routerules/namespaces/{namespace}/service/{service}:
+    get:
+      tags:
+      - routerules
+      summary: Find route rules by destination service
+      description: Return all route rules applied to a destination service
+      produces:
+      - application/json
+      responses:
+        200:
+          description: success
+        404:
+          description: namespace not found
+        500:
+          description: internal server error
+      parameters:
+      - name: namespace
+        in: path
+        description: namespace
+        required: true
+        type: string
+      - name: service
+        in: path
+        description: destination service name
+        required: true
+        type: string
