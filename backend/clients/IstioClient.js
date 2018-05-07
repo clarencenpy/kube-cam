@@ -1,8 +1,9 @@
+const config = require('config');
 const request = require('request');
 
 class IstioClient {
   constructor() {
-    this.baseUrl = 'http://localhost:8081/apis/config.istio.io/v1alpha2'
+    this.baseUrl = `${config.get('istio')}/apis/config.istio.io/v1alpha2`;
   }
 
 

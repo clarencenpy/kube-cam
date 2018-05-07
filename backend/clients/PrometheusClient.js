@@ -1,9 +1,10 @@
+const config = require('config');
 const request = require('request');
 
 class PrometheusClient {
   constructor() {
     this.options = {
-      url: 'http://localhost:9090/api/v1/query_range',
+      url: `${config.get('prometheus')}/api/v1/query_range`,
       qs: {
         query: 'istio_request_count',
         start: undefined,
