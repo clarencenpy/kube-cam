@@ -12,6 +12,8 @@ basePath: /kubecam
 tags:
 - name: routerules
   description: Everything related to Istio routing rules
+- name: traffic
+  description: Everything related to traffic metrics
 paths:
   /routerules/namespaces/{namespace}:
     get:
@@ -193,3 +195,38 @@ paths:
         description: destination service name
         required: true
         type: string
+  /traffic/current:
+    get:
+      tags:
+      - traffic
+      summary: Find request counts at current time
+      description: Returns json object containing details and graph
+      produces:
+      - application/json
+      responses:
+        200:
+          description: success
+  /traffic:
+    get:
+      tags:
+      - traffic
+      summary: Find request counts in time window
+      description: Returns json object containing details and graph from specified time
+      produces:
+      - application/json
+      responses:
+        200:
+          description: success
+        400:
+          description: bad request
+      parameters:
+      - name: start
+        description: start time
+        required: true
+        type: string
+        in: query
+      - name: end
+        description: end time
+        required: false
+        type: string
+        in: query

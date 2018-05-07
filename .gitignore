@@ -9,3 +9,6 @@ dist
 
 # Python compiled files
 *.pyc
+
+# nyc output files
+*.nyc_output
