@@ -24,7 +24,7 @@ Send traffic to frontend container
 curl $ip_address
 ```
 
-View traffic in kube-cam application in the browser at [http://...](http://...)
+View traffic in kube-cam application in the browser at http://ip-address
 
 ## Deploying a sample application with mirroring
 
